@@ -1,48 +1,68 @@
 package com.example.helper;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-/**
- * 数据操作统一管理，异步加载避免阻塞 UI 线程
- */
 public class DataHelper {
+    // 模拟数据存储
+    private List<String> dataStore = new ArrayList<>();
 
     /**
-     * 异步加载待办数据（子线程执行耗时操作）
-     * @param filePath 数据文件路径（项目根目录下）
-     * @param callback 加载完成后的回调（UI 线程更新界面）
+     * 加载数据（模拟耗时操作）
      */
-    public static void loadTodoDataAsync(String filePath, Consumer<List<String>> callback) {
-        new Thread(() -> {
-            List<String> todoList = new ArrayList<>();
-            try (FileReader reader = new FileReader(new File(filePath))) {
-                int character;
-                StringBuilder sb = new StringBuilder();
-                // 读取文件内容
-                while ((character = reader.read()) != -1) {
-                    sb.append((char) character);
-                }
-                // 模拟耗时操作（1秒，便于观察无卡顿效果）
-                Thread.sleep(1000);
-                // 分割数据（按换行符拆分）
-                String[] dataArray = sb.toString().split("\n");
-                for (String data : dataArray) {
-                    if (!data.trim().isEmpty()) {
-                        todoList.add(data.trim());
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 异常时返回空列表，避免程序崩溃
-                todoList = new ArrayList<>();
-            }
-            // 回调结果到 UI 线程（JavaFX 规范：UI 操作必须在 UI 线程执行）
-            List<String> finalTodoList = todoList;
-            javafx.application.Platform.runLater(() -> callback.accept(finalTodoList));
-        }).start();
+    public List<String> loadData() {
+        // 模拟网络延迟
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // 返回数据副本
+        return new ArrayList<>(dataStore);
+    }
+
+    /**
+     * 保存数据
+     */
+    public void saveData(String data) {
+        // 模拟保存操作的延迟
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        dataStore.add(data);
+    }
+
+    /**
+     * 删除选中的数据
+     */
+    public void deleteSelectedData() {
+        // 模拟删除操作的延迟
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        if (!dataStore.isEmpty()) {
+            dataStore.remove(dataStore.size() - 1);
+        }
+    }
+
+    /**
+     * 获取数据数量
+     */
+    public int getDataCount() {
+        return dataStore.size();
+    }
+
+    /**
+     * 清空数据
+     */
+    public void clearData() {
+        dataStore.clear();
     }
 }

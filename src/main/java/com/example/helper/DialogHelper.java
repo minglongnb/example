@@ -1,33 +1,66 @@
 package com.example.helper;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.TextInputDialog;
+import java.util.Optional;
 
-/**
- * 弹窗功能统一管理，单例模式复用实例，提升响应速度
- */
 public class DialogHelper {
-    // 单例弹窗实例（懒加载）
-    private static Dialog<ButtonType> instance;
 
-    // 私有构造，防止外部实例化
-    private DialogHelper() {}
-
-    // 线程安全获取单例实例
-    private static synchronized Dialog<ButtonType> getDialogInstance() {
-        if (instance == null) {
-            instance = new Dialog<>();
-            instance.setTitle("操作结果");
-            instance.setHeaderText(null);
-            instance.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        }
-        return instance;
+    /**
+     * 显示信息对话框
+     */
+    public void showInfoDialog(String title, String message) {
+        showDialog(Alert.AlertType.INFORMATION, title, message);
     }
 
-    // 对外提供统一弹窗接口
-    public static void showTipDialog(String message) {
-        Dialog<ButtonType> dialog = getDialogInstance();
+    /**
+     * 显示错误对话框
+     */
+    public void showErrorDialog(String title, String message) {
+        showDialog(Alert.AlertType.ERROR, title, message);
+    }
+
+    /**
+     * 显示警告对话框
+     */
+    public void showWarningDialog(String title, String message) {
+        showDialog(Alert.AlertType.WARNING, title, message);
+    }
+
+    /**
+     * 显示确认对话框
+     */
+    public Optional<Boolean> showConfirmDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.map(buttonType -> buttonType == ButtonType.OK);
+    }
+
+    /**
+     * 显示输入对话框
+     */
+    public Optional<String> showInputDialog(String title, String message) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.setHeaderText(null);
         dialog.setContentText(message);
-        dialog.showAndWait();
+
+        return dialog.showAndWait();
+    }
+
+    /**
+     * 通用对话框显示方法
+     */
+    private void showDialog(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
