@@ -1,79 +1,3 @@
-//package com.example;
-//
-//import com.google.gson.Gson;
-//import org.apache.http.client.fluent.Request;
-//import org.apache.http.entity.ContentType;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-///**
-// * LLM API 调用工具类，与 GPT-3.5 Turbo 交互获取优化代码
-// */
-//public class LLMClient {
-//    // 替换为你的 OpenAI API Key（从 OpenAI 平台获取）
-//    private static final String API_KEY = "sk-bdf9941fa0c54080ad4b38f1ac394433";
-//    // GPT-3.5 Turbo API 接口地址
-////    private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-//    private static final String API_URL = "https://api.deepseek.com/v1/chat/completions";
-//    private final Gson gson;
-//
-//    public LLMClient() {
-//        this.gson = new Gson();
-//    }
-//
-//    /**
-//     * 调用 LLM 优化 JavaFX 代码
-//     * @param originalCode 待优化的原始代码
-//     * @return 优化后代码 + 优化说明
-//     * @throws Exception 网络异常或 API 调用异常
-//     */
-//    public String optimizeJavaFXCode(String originalCode) throws Exception {
-//        // 核心 Prompt（明确优化规则）
-//        String prompt = "帮我按以下要求优化这段JavaFX代码：" +
-//                "规则1：功能归类拆分——按钮相关逻辑→ButtonHelper类；弹窗相关→DialogHelper类；数据操作→DataHelper类；" +
-//                "规则2：性能优化——合并重复代码、组件懒加载、数据加载放子线程避免UI阻塞；" +
-//                "规则3：保留所有功能，只做归类和提速，不新增/删除功能；" +
-//                "输出要求：先列优化说明，再输出完整代码（含包名、导入语句）。";
-//
-//        // 构造 API 请求参数
-//        Map<String, Object> requestBody = new HashMap<>();
-//        requestBody.put("model", "gpt-3.5-turbo");
-//        requestBody.put("temperature", 0.2); // 降低随机性
-//        requestBody.put("max_tokens", 2048); // 最大输出长度
-//        requestBody.put("messages", new Object[]{
-//                Map.of("role", "system", "content", "你是专业JavaFX开发工程师，擅长重构与性能优化"),
-//                Map.of("role", "user", "content", prompt + "\n\n原始代码：\n" + originalCode)
-//        });
-//
-//        // 发送 POST 请求（适配 JDK 8）
-//        String response = Request.Post(API_URL)
-//                .addHeader("Content-Type", "application/json")
-//                .addHeader("Authorization", "Bearer " + API_KEY)
-//                .bodyString(gson.toJson(requestBody), ContentType.APPLICATION_JSON)
-//                .execute()
-//                .returnContent()
-//                .asString();
-//
-//        // 解析响应结果
-//        Map<String, Object> responseMap = gson.fromJson(response, Map.class);
-//        return ((Map<String, Object>) ((Map<String, Object>) ((List<?>) responseMap.get("choices")).get(0)).get("message")).get("content").toString();
-//    }
-//
-//    // 测试 API 调用（可选）
-//    public static void main(String[] args) {
-//        try {
-//            LLMClient client = new LLMClient();
-//            // 读取原始代码（可替换为你的 MainController.java 代码）
-//            String originalCode = "import javafx.fxml.FXML;..."; // 此处替换为实际原始代码
-//            String result = client.optimizeJavaFXCode(originalCode);
-//            System.out.println("LLM 优化结果：\n" + result);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
-
 package com.example;
 
 import com.google.gson.Gson;
@@ -104,6 +28,7 @@ public class LLMClient {
 
     /**
      * 调用 Deepseek LLM 优化 JavaFX 代码
+     *
      * @param originalCode 待优化的原始 JavaFX 代码
      * @return 优化后代码 + 优化说明
      * @throws Exception 网络异常或 API 调用异常

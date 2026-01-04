@@ -4,3 +4,5 @@ com\example\Main.class
 com\example\helper\DialogHelper.class
 com\example\helper\DataHelper.class
 com\example\LLMClient.class
+com\example\controller\MainController$1.class
+com\example\helper\DataHelper$DataCallback.class
