@@ -1,68 +1,59 @@
 package com.example.helper;
 
+import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataHelper {
-    // 模拟数据存储
-    private List<String> dataStore = new ArrayList<>();
+
+    public interface DataCallback {
+        void onDataLoaded(List<String> todoList);
+    }
 
     /**
-     * 加载数据（模拟耗时操作）
+     * 异步加载待办数据
+     * 在子线程中执行文件读取，避免阻塞UI线程
      */
-    public List<String> loadData() {
-        // 模拟网络延迟
-        try {
+    public static void loadTodoDataAsync(final String filePath, final DataCallback callback) {
+        new Thread(() -> {
+            List<String> todoList = loadTodoData(filePath);
+
+            // 使用Platform.runLater确保UI更新在JavaFX应用线程执行
+            Platform.runLater(() -> callback.onDataLoaded(todoList));
+        }).start();
+    }
+
+    /**
+     * 同步加载待办数据（供需要同步调用的场景使用）
+     */
+    public static List<String> loadTodoData(String filePath) {
+        List<String> todoList = new ArrayList<>();
+
+        try (FileReader reader = new FileReader(new File(filePath))) {
+            int character;
+            StringBuilder sb = new StringBuilder();
+            while ((character = reader.read()) != -1) {
+                sb.append((char) character);
+            }
+
+            // 模拟耗时操作
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+            String[] dataArray = sb.toString().split("\n");
+            for (String data : dataArray) {
+                if (!data.trim().isEmpty()) {
+                    todoList.add(data.trim());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // 返回数据副本
-        return new ArrayList<>(dataStore);
-    }
-
-    /**
-     * 保存数据
-     */
-    public void saveData(String data) {
-        // 模拟保存操作的延迟
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        dataStore.add(data);
-    }
-
-    /**
-     * 删除选中的数据
-     */
-    public void deleteSelectedData() {
-        // 模拟删除操作的延迟
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        if (!dataStore.isEmpty()) {
-            dataStore.remove(dataStore.size() - 1);
-        }
-    }
-
-    /**
-     * 获取数据数量
-     */
-    public int getDataCount() {
-        return dataStore.size();
-    }
-
-    /**
-     * 清空数据
-     */
-    public void clearData() {
-        dataStore.clear();
+        return todoList;
     }
 }
