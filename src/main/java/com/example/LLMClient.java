@@ -80,7 +80,10 @@ import com.google.gson.Gson;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,18 +152,14 @@ public class LLMClient {
             LLMClient client = new LLMClient();
 
             // ✅ 使用实际 JavaFX 代码
-            String originalCode =
-                    "package com.example.controller;\n" +
-                            "import javafx.fxml.FXML;\n" +
-                            "import javafx.scene.control.Button;\n" +
-                            "import javafx.scene.control.Label;\n" +
-                            "import java.util.List;\n" +
-                            "\n" +
-                            "public class MainController {\n" +
-                            "    @FXML private Button addBtn;\n" +
-                            "    @FXML private Button deleteBtn;\n" +
-                            "    @FXML private Label dataCountLabel;\n" +
-                            "}";
+            String filePath = "src/main/java/com/example/controller/MainController.java";
+            File file = new File(filePath);
+            if (!file.exists()) {
+                System.err.println("文件不存在：" + filePath);
+                return;
+            }
+
+            String originalCode = new String(Files.readAllBytes(Paths.get(filePath)), "UTF-8");
 
 
             String result = client.optimizeJavaFXCode(originalCode);
